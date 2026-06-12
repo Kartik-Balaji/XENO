@@ -1,0 +1,23 @@
+{
+  "name": "channel-service",
+  "version": "1.0.0",
+  "description": "CraveStop Channel Simulation Service — simulates delivery lifecycle events for WhatsApp, SMS, Email, and RCS channels",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["channel", "simulation", "crm", "whatsapp", "sms", "email", "rcs"],
+  "license": "MIT"
+}
