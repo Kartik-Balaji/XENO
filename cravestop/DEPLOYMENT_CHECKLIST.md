@@ -27,35 +27,33 @@
    cd cravestop/crm-backend
    vercel
    ```
-   - Project name: `cravestop-backend`
-   - Save the URL: `https://cravestop-backend.vercel.app`
+   - Project name: `cravestop-backend` → `https://xeno-backend-ecru.vercel.app`
 
 2. **Deploy Channel Service**
    ```bash
    cd cravestop/channel-service
    vercel
    ```
-   - Project name: `cravestop-channels`
-   - Save the URL: `https://cravestop-channels.vercel.app`
+   - Project name: `cravestop-channels` → `https://xeno-channel-service-five.vercel.app`
 
 3. **Deploy Frontend Last**
    ```bash
    cd cravestop/frontend
-   vercel env add NEXT_PUBLIC_API_URL https://cravestop-backend.vercel.app
-   vercel env add NEXT_PUBLIC_CHANNEL_SERVICE_URL https://cravestop-channels.vercel.app
+   vercel env add NEXT_PUBLIC_API_URL https://xeno-backend-ecru.vercel.app
+   vercel env add NEXT_PUBLIC_CHANNEL_SERVICE_URL https://xeno-channel-service-five.vercel.app
    vercel
    ```
-   - Project name: `cravestop-frontend`
+   - Project name: `cravestop-frontend` → `https://xeno-sage.vercel.app`
 
 ---
 
 ## 🔧 Quick Links After Deployment
 
-| Service | Deploy Command | URL Pattern | Environment |
+| Service | Deploy Command | URL | Environment |
 |---------|---|---|---|
-| Backend | `vercel` in `crm-backend/` | `https://cravestop-backend.vercel.app` | Backend APIs |
-| Channels | `vercel` in `channel-service/` | `https://cravestop-channels.vercel.app` | Channel simulation |
-| Frontend | `vercel` in `frontend/` | `https://cravestop-frontend.vercel.app` | Web UI |
+| Backend | `vercel` in `crm-backend/` | `https://xeno-backend-ecru.vercel.app` | Backend APIs |
+| Channels | `vercel` in `channel-service/` | `https://xeno-channel-service-five.vercel.app` | Channel simulation |
+| Frontend | `vercel` in `frontend/` | `https://xeno-sage.vercel.app` | Web UI |
 
 ---
 
@@ -105,14 +103,15 @@ Then open: `http://localhost:3002`
 
 ### Frontend (.env.production)
 ```
-NEXT_PUBLIC_API_URL=https://cravestop-backend.vercel.app
-NEXT_PUBLIC_CHANNEL_SERVICE_URL=https://cravestop-channels.vercel.app
+NEXT_PUBLIC_API_URL=https://xeno-backend-ecru.vercel.app
+NEXT_PUBLIC_CHANNEL_SERVICE_URL=https://xeno-channel-service-five.vercel.app
 ```
 
 ### Backend (Vercel Project Settings)
 ```
 NODE_ENV=production
 DB_PATH=./data.db
+CHANNEL_SERVICE_URL=https://xeno-channel-service-five.vercel.app/channel/send-batch
 ```
 
 ### Channel Service (Vercel Project Settings)

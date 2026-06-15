@@ -1,6 +1,6 @@
 {
   "framework": "nextjs",
-  "buildCommand": "cd frontend && npm run build",
+  "buildCommand": "cd frontend && npm run build && cp -r .next ../.next",
   "installCommand": "cd frontend && npm install",
   "ignoreCommand": "git diff --quiet $VERCEL_GIT_COMMIT_REF^ $VERCEL_GIT_COMMIT_REF -- frontend"
 }
