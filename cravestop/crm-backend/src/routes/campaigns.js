@@ -221,7 +221,6 @@ router.post('/:id/launch', async (req, res) => {
             skip_event_id,
             campaign_id,
             customer.customer_id,
-            null,
             now,
             now,
             JSON.stringify({ reason: 'frequency_cap_exceeded' }),

@@ -80,7 +80,8 @@ async function run() {
   // 6. Check campaigns list
   console.log('\n── Step 6: List Campaigns ──');
   try {
-    const campaigns = await api('GET', '/api/campaigns');
+    const campaignsData = await api('GET', '/api/campaigns');
+    const campaigns = campaignsData.campaigns || [];
     pass('Campaigns listed', campaigns.length + ' campaigns');
     const sending = campaigns.find(c => c.campaign_id === campaign.campaign_id);
     pass('New campaign in list', sending?.status);
@@ -101,7 +102,8 @@ async function run() {
   // 8. Events for completed campaign
   console.log('\n── Step 8: Events Endpoint ──');
   try {
-    const events = await api('GET', '/api/campaigns/camp_menu_completed/events');
+    const eventsData = await api('GET', '/api/campaigns/camp_menu_completed/events');
+    const events = eventsData.events || eventsData || [];
     pass('Events returned', events.length + ' events');
     const types = [...new Set(events.map(e => e.event_type))].sort();
     pass('Event types', types.join(', '));

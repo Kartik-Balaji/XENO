@@ -454,45 +454,60 @@ async function reasoningWriter(computed_facts, playType, offerTiers, sendTime, p
 
   let reasoning = deterministicReasoning;
 
-  // --- Optional LLM enhancement via Gemini ---
-  if (process.env.GEMINI_API_KEY) {
+  // --- LLM enhancement: Groq API ---
+  const GROQ_KEY = process.env.GROQ_API_KEY;
+
+  // Build a compact prompt — keeps total tokens well under Groq free-tier limit (8K TPM)
+  const llmPrompt = [
+    `You are a QSR campaign strategist writing a concise, marketer-facing campaign brief.`,
+    `Play: ${playType.replace(/_/g, ' ')}`,
+    `Audience: ${computed_facts.avg_rhythm_multiplier}x order rhythm, ${computed_facts.pct_dinner_period}% dinner-period, avg churn score ${computed_facts.avg_churn_score}, top channel: ${computed_facts.top_channel}.`,
+    `Segments: ${offerTiers.loyal_points.count} loyal (2x points), ${offerTiers.medium_risk_10.count} medium-risk (10% off), ${offerTiers.high_risk_15.count} high-risk (15% off).`,
+    `Predicted: ${predictions.messages_to_send} msgs → ${predictions.delivered} delivered → ${predictions.clicked} clicks → ${predictions.orders} orders → ₹${predictions.revenue} revenue.`,
+    `Send time: ${sendTime}.`,
+    `Write ONE crisp paragraph (3 sentences max) explaining WHY this segment was picked, what behavioral signal triggered the play, and what action to take.`,
+    `Use the specific numbers. No generic advice. Plain text only.`,
+  ].join(' ');
+
+  if (GROQ_KEY) {
     try {
-      const { GoogleGenerativeAI } = require('@google/generative-ai');
-      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+      const { Groq } = require('groq-sdk');
+      const client = new Groq({ apiKey: GROQ_KEY });
 
-      const campaignData = {
-        play_type: playType,
-        ...computed_facts,
-        offer_tiers: {
-          loyal_points:   offerTiers.loyal_points.count,
-          medium_risk_10: offerTiers.medium_risk_10.count,
-          high_risk_15:   offerTiers.high_risk_15.count,
-        },
-        predictions,
-        send_time: sendTime,
-      };
+      const completion = await client.chat.completions.create({
+        model: 'openai/gpt-oss-20b',
+        messages: [{ role: 'user', content: llmPrompt }],
+        temperature: 1,
+        max_completion_tokens: 400,
+        top_p: 1,
+        reasoning_effort: 'low',
+        stream: true,
+        stop: null,
+      });
 
-      const prompt =
-        `You are writing a one-paragraph marketer-facing campaign reasoning for a QSR CRM.\n` +
-        `Campaign data: ${JSON.stringify(campaignData)}\n` +
-        `Write one specific paragraph (3-4 sentences) explaining WHY this audience was selected, ` +
-        `what behavioral signal triggered this play, and what the recommended action is.\n` +
-        `Be specific about the numbers. Do not give generic marketing advice. ` +
-        `Output only the paragraph, no headers or formatting.`;
+      let contentText  = '';
+      let reasoningText = '';
+      for await (const chunk of completion) {
+        const delta = chunk.choices[0]?.delta;
+        if (delta?.content)   contentText  += delta.content;
+        if (delta?.reasoning) reasoningText += delta.reasoning;
+      }
 
-      const result = await model.generateContent(prompt);
-      const llmText = result.response.text().trim();
-
+      // Prefer the final content answer; fall back to the reasoning trace if content is empty
+      const llmText = (contentText.trim() || reasoningText.trim());
+      console.log('[playEngine] Groq content len:', contentText.length, '| reasoning len:', reasoningText.length);
       if (llmText && llmText.length > 20) {
         reasoning = llmText;
+        console.log('[playEngine] Using Groq AI reasoning ✅');
+      } else {
+        console.warn('[playEngine] Groq returned empty text, using deterministic fallback');
       }
     } catch (err) {
-      // LLM call failed — fall back to deterministic template silently
-      console.warn('[playEngine] Gemini LLM call failed, using deterministic fallback:', err.message);
+      console.warn('[playEngine] Groq call failed, using deterministic fallback:', err.message);
       reasoning = deterministicReasoning;
     }
   }
+
 
   return { reasoning, message_variants };
 }

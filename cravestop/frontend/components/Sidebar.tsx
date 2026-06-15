@@ -2,56 +2,61 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { clsx } from 'clsx';
 
 const navItems = [
-  { href: '/', label: 'Growth Kitchen', icon: '✦' },
-  { href: '/campaigns', label: 'Campaigns', icon: '▤' },
+  { href: '/kitchen', label: 'Kitchen', icon: 'auto_awesome' },
+  { href: '/campaigns', label: 'Campaigns', icon: 'send' },
+  { href: '/monitor', label: 'Monitor', icon: 'vital_signs' },
+  { href: '/analytics', label: 'Analytics', icon: 'bar_chart_4_bars' },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
 
+  const isActive = (href: string) => {
+    return pathname === href || pathname.startsWith(href + '/');
+  };
+
   return (
-    <aside className="w-[220px] min-h-screen border-r border-zinc-800 bg-[#111111] flex flex-col shrink-0">
+    <aside className="fixed inset-y-0 left-0 w-64 bg-white border-r border-[#E8E0D0] flex flex-col z-20">
       {/* Logo */}
-      <div className="px-5 pt-6 pb-4 border-b border-zinc-800">
-        <div className="text-base font-bold tracking-tight text-zinc-50">
-          Crave<span className="text-orange-500">Stop</span>
-        </div>
-        <div className="text-xs text-zinc-500 mt-0.5 font-medium">UrbanBite Platform</div>
+      <div className="px-6 pt-7 pb-6">
+        <div className="text-2xl font-bold text-[#D95F2B] tracking-tight">CraveStop</div>
+        <div className="text-xs font-medium text-[#A89880] uppercase tracking-widest mt-1">Growth Kitchen • AI Copilot</div>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 pt-4 space-y-0.5">
-        {navItems.map((item) => {
-          const isActive =
-            item.href === '/'
-              ? pathname === '/'
-              : pathname.startsWith(item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={clsx(
-                'flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors duration-150',
-                isActive
-                  ? 'bg-zinc-800 text-zinc-50 border-l-2 border-orange-500 rounded-l-none pl-[10px]'
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
-              )}
+      <nav className="flex-1 px-3 space-y-0.5">
+        {navItems.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 group ${
+              isActive(item.href)
+                ? 'bg-[#F5E6DC] text-[#D95F2B] border-l-2 border-[#D95F2B]'
+                : 'text-[#6B5D52] hover:bg-[#F5F0E8] hover:text-[#1A1410] border-l-2 border-transparent'
+            }`}
+          >
+            <span
+              className="material-symbols-outlined text-[18px]"
+              style={isActive(item.href) ? { fontVariationSettings: "'FILL' 1" } : {}}
             >
-              <span className={clsx('text-xs', isActive ? 'text-orange-500' : 'text-zinc-600')}>
-                {item.icon}
-              </span>
-              {item.label}
-            </Link>
-          );
-        })}
+              {item.icon}
+            </span>
+            <span>{item.label}</span>
+          </Link>
+        ))}
       </nav>
 
-      {/* Bottom */}
-      <div className="px-5 py-4 border-t border-zinc-800">
-        <div className="text-xs text-zinc-600">Growth Kitchen v1.0</div>
+      {/* Bottom CTA */}
+      <div className="p-4 border-t border-[#E8E0D0]">
+        <Link
+          href="/kitchen"
+          className="flex items-center justify-center gap-2 w-full bg-[#D95F2B] hover:bg-[#C4501F] text-white text-sm font-semibold py-2.5 px-4 rounded-lg transition-colors shadow-sm"
+        >
+          <span className="material-symbols-outlined text-[16px]">rocket_launch</span>
+          Launch New Play
+        </Link>
       </div>
     </aside>
   );

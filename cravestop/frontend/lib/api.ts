@@ -148,13 +148,17 @@ export const api = {
     }),
 
   getCampaigns: () =>
-    apiFetch<Campaign[]>('/api/campaigns'),
+    apiFetch<{ campaigns: Campaign[] }>('/api/campaigns').then(res => res.campaigns || []),
 
   getCampaign: (campaignId: string) =>
     apiFetch<Campaign>(`/api/campaigns/${campaignId}`),
 
   getCampaignEvents: (campaignId: string) =>
-    apiFetch<CampaignEvent[]>(`/api/campaigns/${campaignId}/events`),
+    apiFetch<{ events: CampaignEvent[] } | any[]>(`/api/campaigns/${campaignId}/events`).then(res => {
+      // Handle both { events: [...] } format and direct array format just in case
+      if (Array.isArray(res)) return res;
+      return res.events || [];
+    }),
 
   getCampaignAnalytics: (campaignId: string) =>
     apiFetch<CampaignAnalytics>(`/api/campaigns/${campaignId}/analytics`),

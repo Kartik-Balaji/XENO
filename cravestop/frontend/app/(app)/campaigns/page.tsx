@@ -61,7 +61,7 @@ export default function CampaignsPage() {
           </Link>
         </div>
       ) : (
-        <div className="bg-[#18181b] border border-zinc-800 rounded-md overflow-hidden">
+        <div className="bg-[#FAF7F2] border border-zinc-800 rounded-md overflow-hidden">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-zinc-800">

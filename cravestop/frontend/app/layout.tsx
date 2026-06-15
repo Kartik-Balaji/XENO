@@ -1,31 +1,26 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { Sidebar } from "@/components/Sidebar";
-import { Toaster } from "@/components/ui/toaster";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { Toaster } from '@/components/ui/toaster';
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
-  title: "CraveStop — Growth Kitchen",
-  description: "AI-powered restaurant marketing campaigns",
+  title: 'CraveStop',
+  description: 'AI-powered campaign copilot for QSR marketing',
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} h-full`}>
-      <body className="h-full bg-[#09090b] text-zinc-50 antialiased flex">
-        <Sidebar />
-        <main className="flex-1 overflow-auto">
-          {children}
-        </main>
+    <html lang="en">
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+          rel="stylesheet"
+        />
+      </head>
+      <body className={inter.variable}>
+        {children}
         <Toaster />
       </body>
     </html>
