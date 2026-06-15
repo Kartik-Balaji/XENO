@@ -113,4 +113,7 @@ app.use((err, _req, res, _next) => {
 });
 
 // Export for Vercel
-module.exports = app;
+const handler = (req, res) => app(req, res);
+
+module.exports = handler;
+module.exports.default = handler;
