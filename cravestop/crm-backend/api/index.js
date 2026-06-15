@@ -73,11 +73,5 @@ app.use((req, res) => {
   res.status(404).json({ error: `Route not found: ${req.method} ${req.path}` });
 });
 
-// ── Global error handler ───────────────────────────────────────────────────
-app.use((err, req, res, _next) => {
-  console.error('Unhandled error:', err);
-  res.status(500).json({ error: err.message || 'Internal server error' });
-});
-
 // Export for Vercel
 module.exports = app;
