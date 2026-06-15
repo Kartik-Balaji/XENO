@@ -7,7 +7,7 @@ const { canSendMessage } = require('../services/frequencyCap');
 const axios = require('axios');
 const { nanoid } = require('nanoid');
 
-const CHANNEL_SERVICE_URL = 'http://localhost:3001/channel/send-batch';
+const CHANNEL_SERVICE_URL = process.env.CHANNEL_SERVICE_URL || 'http://localhost:3001/channel/send-batch';
 
 // ---------------------------------------------------------------------------
 // Helper: build segment query from segment_rules_json
@@ -292,7 +292,7 @@ router.post('/:id/launch', async (req, res) => {
     let channel_service_warning = null;
     try {
       const batch_id = `batch_${nanoid(10)}`;
-      const callbackUrl = `http://localhost:3000/api/receipts`;
+      const callbackUrl = `${process.env.SELF_URL || 'http://localhost:3000'}/api/receipts`;
 
       // Map messageBatch to channel service format (recipient = phone or email)
       const channelMessages = messageBatch.map(m => ({
