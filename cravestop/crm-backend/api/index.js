@@ -37,6 +37,34 @@ app.use((req, _res, next) => {
   next();
 });
 
+// Vercel path normalization: serve /api/* root-level routes at their root path
+// This ensures /api/health maps to the /health handler
+app.use((req, _res, next) => {
+  // Known root-level routes that should also work under /api prefix
+  const rootRoutes = ['/health', '/'];
+  if (rootRoutes.includes(req.path.replace(/^\/api/, '') || '/')) {
+    req.url = req.path.replace(/^\/api/, '') || '/';
+  }
+  next();
+});
+
+// ── Root ──────────────────────────────────────────────────────────────────
+app.get('/', (req, res) => {
+  res.json({
+    service: 'CraveStop CRM Backend',
+    status: 'running',
+    endpoints: {
+      health: '/health',
+      seed: '/api/seed',
+      plays: '/api/plays',
+      campaigns: '/api/campaigns',
+      receipts: '/api/receipts',
+      orders: '/api/orders',
+      customers: '/api/customers',
+    },
+  });
+});
+
 // ── Health check ───────────────────────────────────────────────────────────
 app.get('/health', async (req, res) => {
   try {

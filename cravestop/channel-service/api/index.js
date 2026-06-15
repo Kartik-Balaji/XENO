@@ -24,6 +24,15 @@ app.use(cors());
 // JSON body parsing (max 10 MB to handle large batches)
 app.use(express.json({ limit: '10mb' }));
 
+// Vercel path normalization: serve root-level routes under /api prefix too
+app.use((req, _res, next) => {
+  const rootRoutes = ['/health', '/'];
+  if (rootRoutes.includes(req.path.replace(/^\/api/, '') || '/')) {
+    req.url = req.path.replace(/^\/api/, '') || '/';
+  }
+  next();
+});
+
 // ─── Request logger ───────────────────────────────────────────────────────────
 
 app.use((req, res, next) => {
@@ -39,6 +48,21 @@ app.use((req, res, next) => {
 });
 
 // ─── Routes ───────────────────────────────────────────────────────────────────
+
+/**
+ * GET /
+ * Root status.
+ */
+app.get('/', (_req, res) => {
+  res.json({
+    service: 'CraveStop Channel Service',
+    status: 'running',
+    endpoints: {
+      health: '/health',
+      'send-batch': '/channel/send-batch',
+    },
+  });
+});
 
 /**
  * GET /health
